@@ -329,6 +329,17 @@ ssize_t read_in_full(int fd, void *buf, size_t count)
 	return total;
 }
 
+void xread_in_full(int fd, void *buf, size_t count, const char *desc)
+{
+	ssize_t ret = read_in_full(fd, buf, count);
+
+	if (ret < 0)
+		die_errno("error reading %s", desc);
+	if (ret != count)
+		die("too few bytes while reading %s (expected %"PRIuMAX", got %"PRIuMAX")",
+		    desc, (uintmax_t)count, (uintmax_t)ret);
+}
+
 ssize_t write_in_full(int fd, const void *buf, size_t count)
 {
 	const char *p = buf;

@@ -24,8 +24,7 @@ int cmd_get_tar_commit_id(int argc, const char **argv, const char *prefix)
 	if (argc != 1)
 		usage(builtin_get_tar_commit_id_usage);
 
-	if (read_in_full(0, buffer, HEADERSIZE) != HEADERSIZE)
-		die_errno("git get-tar-commit-id: read error");
+	xread_in_full(0, buffer, HEADERSIZE, "stdin");
 	if (header->typeflag[0] != 'g')
 		return 1;
 	if (!skip_prefix(content, "52 comment=", &comment))
