@@ -59,7 +59,11 @@ static int prune_worktree(const char *id, struct strbuf *reason)
 	}
 	len = xsize_t(st.st_size);
 	path = xmallocz(len);
-	read_in_full(fd, path, len);
+	if (read_in_full(fd, path, len) != len) {
+		strbuf_addf(reason, _("Removing worktrees/%s: gitdir read did not match stat (%s)"),
+			    id, strerror(errno));
+		return 1;
+	}
 	close(fd);
 	while (len && (path[len - 1] == '\n' || path[len - 1] == '\r'))
 		len--;
