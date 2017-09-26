@@ -409,14 +409,17 @@ test_expect_success 'submodule update - command in .git/config' '
 test_expect_success 'submodule update - command in .gitmodules is ignored' '
 	test_when_finished "git -C super reset --hard HEAD^" &&
 
-	write_script must_not_run.sh <<-EOF &&
-	>$TEST_DIRECTORY/bad
+	write_script must_not_run.sh <<-\EOF &&
+	>"$TEST_DIRECTORY/bad"
 	EOF
 
 	git -C super config -f .gitmodules submodule.submodule.update "!$TEST_DIRECTORY/must_not_run.sh" &&
 	git -C super commit -a -m "add command to .gitmodules file" &&
 	git -C super/submodule reset --hard $submodulesha1^ &&
-	git -C super submodule update submodule &&
+	(
+		export TEST_DIRECTORY &&
+		git -C super submodule update submodule
+	) &&
 	test_path_is_missing bad
 '
 
