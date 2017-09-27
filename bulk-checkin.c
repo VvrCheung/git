@@ -115,9 +115,7 @@ static int stream_to_pack(struct bulk_checkin_state *state,
 
 		if (size && !s.avail_in) {
 			ssize_t rsize = size < sizeof(ibuf) ? size : sizeof(ibuf);
-			if (read_in_full(fd, ibuf, rsize) != rsize)
-				die("failed to read %d bytes from '%s'",
-				    (int)rsize, path);
+			xread_in_full(fd, ibuf, rsize, path);
 			offset += rsize;
 			if (*already_hashed_to < offset) {
 				size_t hsize = offset - *already_hashed_to;

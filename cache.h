@@ -1812,6 +1812,13 @@ extern ssize_t read_in_full(int fd, void *buf, size_t count);
 extern ssize_t write_in_full(int fd, const void *buf, size_t count);
 extern ssize_t pread_in_full(int fd, void *buf, size_t count, off_t offset);
 
+/*
+ * Like read_in_full(), but die on errors or a failure to read exactly "count"
+ * bytes. The "desc" string will be inserted into the error message as "reading
+ * %s".
+ */
+extern void xread_in_full(int fd, void *buf, size_t count, const char *desc);
+
 static inline ssize_t write_str_in_full(int fd, const char *str)
 {
 	return write_in_full(fd, str, strlen(str));

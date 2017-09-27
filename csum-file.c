@@ -15,12 +15,8 @@ static void flush(struct sha1file *f, const void *buf, unsigned int count)
 {
 	if (0 <= f->check_fd && count)  {
 		unsigned char check_buffer[8192];
-		ssize_t ret = read_in_full(f->check_fd, check_buffer, count);
 
-		if (ret < 0)
-			die_errno("%s: sha1 file read error", f->name);
-		if (ret < count)
-			die("%s: sha1 file truncated", f->name);
+		xread_in_full(f->check_fd, check_buffer, count, f->name);
 		if (memcmp(buf, check_buffer, count))
 			die("sha1 file '%s' validation error", f->name);
 	}

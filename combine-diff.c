@@ -1027,7 +1027,6 @@ static void show_patch_diff(struct combine_diff_path *elem, int num_parent,
 			free_filespec(df);
 		} else if (0 <= (fd = open(elem->path, O_RDONLY))) {
 			size_t len = xsize_t(st.st_size);
-			ssize_t done;
 			int is_file, i;
 
 			elem->mode = canon_mode(st.st_mode);
@@ -1042,12 +1041,7 @@ static void show_patch_diff(struct combine_diff_path *elem, int num_parent,
 
 			result_size = len;
 			result = xmallocz(len);
-
-			done = read_in_full(fd, result, len);
-			if (done < 0)
-				die_errno("read error '%s'", elem->path);
-			else if (done < len)
-				die("early EOF '%s'", elem->path);
+			xread_in_full(fd, result, len, elem->path);
 
 			/* If not a fake symlink, apply filters, e.g. autocrlf */
 			if (is_file) {
